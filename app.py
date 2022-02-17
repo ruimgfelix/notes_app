@@ -27,7 +27,9 @@ def create():
 def edit_note(note_id):
     edit_note = {}
     if len(my_notes) > 0:
-        edit_note = getNote(note_id)
+        index = get_index(note_id)
+
+        edit_note = my_notes[index]
     else:
         return redirect(url_for('menu'))
     return render_template('content.html', my_notes = my_notes, new_note = edit_note, view=views["create_edit"], search_flag = False)
@@ -35,11 +37,12 @@ def edit_note(note_id):
 
 @app.route('/submit_edit_note/<int:note_id>', methods=['POST'])
 def submit_edit_note(note_id):
-    prev_note = getNote(note_id)
+    index = get_index(note_id)
+    prev_note = my_notes[index]
     if request.method == 'POST':
         note_title = request.form.get('inputNoteTitle')
         note_description = request.form.get('inputNoteDescription')
-        my_notes[note_id] = {
+        my_notes[index] = {
             "note_id": note_id,
             "note_title": note_title,
             "note_description": note_description,
@@ -66,7 +69,10 @@ def submit_note():
 def search():
     if request.method == 'POST':
         filter_search = request.form.get('filter_notes')
-        search_notes = filter_notes(my_notes, filter_search)
+        search_notes = []
+        if (filter_search != ""):
+            search_notes = filter_notes(my_notes, filter_search)
+        
         return render_template('content.html', my_notes = search_notes, new_note = {}, view=views["list"], search_flag = True)
 
 @app.route('/order/<string:method>', methods=['POST'])
@@ -77,8 +83,7 @@ def order_notes(method):
 
 @app.route('/remove_note/<int:note_id>', methods=['GET'])
 def remove_note(note_id):
-    if len(my_notes) > 0: 
-        my_notes.pop(note_id)
+    my_notes.pop(get_index(note_id))
     return redirect(url_for('menu'))
 
 
@@ -107,9 +112,14 @@ def addNotes(note):
 def getNextNoteId():
     return len(my_notes)
 
-def getNote(note_id):
-    note = my_notes[note_id]
-    return note
+def get_index(note_id):
+    index = 0
+    if len(my_notes) > 0:
+        for i in range(len(my_notes)):
+            elem = my_notes[i]["note_id"]
+            if elem == note_id:
+                index = i
+    return index
 
 
 

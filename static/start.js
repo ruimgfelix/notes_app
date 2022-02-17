@@ -1,4 +1,5 @@
 $(document).ready( () => {
+
   $("#loading").hide();
 
   $('#orderBySelect').on('change', () => {
@@ -6,11 +7,15 @@ $(document).ready( () => {
     const method = $('#orderBySelect').val();
     $.ajax({ type: "POST", url: "/order/"+method,
       success: function (msg) {
-        
-        $("#orderBySelect").val(method);
         $("body").html(msg);
         $("#loading").hide();
+        $("#orderBySelect").val(method);
       },
     });
   });
+
+  $('#formSearch').on('submit', () => {
+    $("#loading").hide();
+  });
+  
 });
