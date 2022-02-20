@@ -48,6 +48,8 @@
         <p>{{ note["note_description"] }}</p>
         <h5>Note Creation Date</h5>
         <p>{{ note["note_created_date"] }}</p>
+        <h5>Note Type</h5>
+        <p>{{ note["note_type"] }}</p>
         <div>
           
           <form id="removeForm" action="/remove_note/{{ note['note_id'] }}">
@@ -89,6 +91,7 @@
           <label for="inputNoteTitle">Note Title</label>
           <input type="text" class="form-control" id="inputNoteTitle" placeholder="Enter Note Title"
             name="inputNoteTitle" value="{{ new_note['note_title'] }}">
+            <small id="inputNoteTitleError" class="form-text text-danger">The Note Title cannot be an empty string.</small>
         </div>
         <div class="form-group mt-3">
           <label for="inputNoteDescription">Note Description</label>
@@ -96,6 +99,21 @@
             placeholder="Enter Note Description"
             name="inputNoteDescription">{{ new_note['note_description'] }}</textarea>
           <small id="noteDesc" class="form-text text-muted">A brief description for your note.</small>
+          <small id="inputNoteDescriptionError" class="form-text text-danger">The Note Description cannot be an empty string.</small>
+        </div>
+        <div class="form-group mt-3">
+          <label for="noteTitle">Note Title</label>
+          <select class="form-control" id="noteTitle" name="noteTitle">
+            {% if new_note['note_id'] is defined %}
+            <option value="{{ new_note['note_type'] }}" selected hidden>{{ new_note['note_type'] }}</option>
+            {% else %}
+            <option value="" selected disabled hidden>Choose Note Type</option>
+            {% endif %}
+            <option value="Free Text">Free Text</option>
+            <option value="List">List</option>
+            <option value="Reminder">Reminder</option>
+          </select>
+          <small id="noteTitleError" class="form-text text-danger">The Note Description cannot be an empty string.</small>
         </div>
         <br>
         <button id="submitNote" type="button" class="btn btn-success" data-toggle="modal" data-target="#editCreateModal">Submit</button>
@@ -125,8 +143,8 @@
         <p>Are you sure you want to submit this note?</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="submit" form="editCreateForm" class="btn btn-success">Confirm</button>
+        <button type="button" id="modalConfirmButtonCreateClose" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="modalConfirmButtonCreate" class="btn btn-success">Confirm</button>
       </div>
     </div>
   </div>

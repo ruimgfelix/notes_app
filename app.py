@@ -28,7 +28,6 @@ def edit_note(note_id):
     edit_note = {}
     if len(my_notes) > 0:
         index = get_index(note_id)
-
         edit_note = my_notes[index]
     else:
         return redirect(url_for('menu'))
@@ -42,10 +41,12 @@ def submit_edit_note(note_id):
     if request.method == 'POST':
         note_title = request.form.get('inputNoteTitle')
         note_description = request.form.get('inputNoteDescription')
+        note_type = request.form.get('noteTitle')
         my_notes[index] = {
             "note_id": note_id,
             "note_title": note_title,
             "note_description": note_description,
+            "note_type": note_type,
             "note_created_date": prev_note["note_created_date"]
         }
         return render_template('content.html', my_notes = my_notes, new_note = {}, view=views["list"], search_flag = False)
@@ -56,10 +57,13 @@ def submit_note():
     if request.method == 'POST':
         note_title = request.form.get('inputNoteTitle')
         note_description = request.form.get('inputNoteDescription')
+        note_type = request.form.get('noteTitle')
+        print(note_type)
         new_note = {
             "note_id": getNextNoteId(),
             "note_title": note_title,
             "note_description": note_description,
+            "note_type": note_type,
             "note_created_date": today.strftime("%d %B %Y, %H:%M:%S")
         }
         addNotes(new_note)
@@ -91,7 +95,7 @@ def order_notes_by_method(method):
     if method == "title":
         my_notes.sort(key=lambda x: x["note_title"])
     elif method == "type":
-        my_notes.sort(key=lambda x: x["type"])
+        my_notes.sort(key=lambda x: x["note_type"])
     elif method == "oldest":
         my_notes.sort(key=lambda x: datetime.datetime.strptime(x["note_created_date"], '%d %B %Y, %H:%M:%S'))
     else:
